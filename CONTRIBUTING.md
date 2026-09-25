@@ -10,7 +10,7 @@ This project follows Conventional Commits:
 
 <type>(scope): <description>
 
-Common types: feat, fix, docs, test, refactor, perf, build, ci, chore
+Common types: feat, fix, docs, test, refactor, perf, build, ci, chore, security
 
 ## Pull Requests
 
