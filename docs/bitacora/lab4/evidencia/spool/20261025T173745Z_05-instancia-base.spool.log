@@ -1,0 +1,39 @@
+SP2-0310: unable to open file "scripts/ops/marca.sql"
+Help: https://docs.oracle.com/error-help/db/sp2-0310/
+Enter value for marca: SP2-0768: Illegal SPOOL command
+Help: https://docs.oracle.com/error-help/db/sp2-0768/
+Usage: SPOOL { <file> | OFF | OUT }
+where <file> is file_name[.ext] [CRE[ATE]|REP[LACE]|APP[END]]
+== 1. La INSTANCIA: procesos + memoria, vive mientras está arrancada ==
+
+INSTANCE_NAME	 HOST_NAME	VERSION_FULL	  STATUS       DATABASE_STATUS	 ARRANCADA
+---------------- -------------- ----------------- ------------ ----------------- -------------------
+FREE		 d3d7ea2d28a4	23.26.3.0.0	  OPEN	       ACTIVE		 2026-10-25 17:35:47
+== 2. La BASE DE DATOS: archivos en disco, existe aunque la instancia esté parada ==
+
+      DBID NAME 	    DB_UNIQUE_NAME		   CDB LOG_MODE     OPEN_MODE		 PLATFORM_NAME		CREADA
+---------- ---------------- ------------------------------ --- ------------ -------------------- ---------------------- ----------
+1509902213 FREE 	    FREE			   YES ARCHIVELOG   READ WRITE		 Linux x86 64-bit	2026-07-05
+== 3. ¿Dónde estoy y con quién? ==
+
+CONTENEDOR SERVICIO	USUARIO      SID
+---------- ------------ ------------ ------
+CDB$ROOT   SYS$USERS	SYS	     20
+== 4. Servicios que la instancia ofrece (LREG los registra en el listener) ==
+
+    CON_ID NAME 	    NETWORK_NAME
+---------- ---------------- ----------------
+	 1 SYS$BACKGROUND
+	 1 SYS$USERS
+	 1 free 	    free
+	 1 freeXDB	    freeXDB
+	 3 freepdb1	    freepdb1
+== 5. Los archivos que forman la base de datos ==
+
+TIPO			 N	   MB
+--------------- ---------- ----------
+datafiles		16	 3924
+tempfiles		 3	   60
+redo (miembros) 	 3
+control files		 2
+not spooling currently

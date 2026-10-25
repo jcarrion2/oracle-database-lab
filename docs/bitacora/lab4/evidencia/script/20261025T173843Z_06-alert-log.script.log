@@ -1,0 +1,46 @@
+== Alert log: /opt/oracle/diag/rdbms/free/FREE/trace/alert_FREE.log ==
+Starting ORACLE instance (normal) (OS id: 2351)
+ORA-27167: Attempt to determine if Oracle binary image is stored on remote server failed
+ORA-27300: OS system dependent operation:parse_df failed with status: 2
+ORA-27301: OS failure message: No such file or directory
+ORA-27302: failure occurred at: parse failed
+ORA-27303: additional information: Filesystem      1K-blocks      Used Available Use% Mounted on
+ORA-00800: soft external error, arguments: [Set Priority Failed], [VKTM], [Check traces and OS configuration], [Check Oracle document and MOS notes], []
+ORA-00800: soft external error, arguments: [Set Priority Failed], [LGWR], [Check traces and OS configuration], [Check Oracle document and MOS notes], []
+ALTER DATABASE   MOUNT
+Successful mount of redo thread 1, with mount id 1509904712
+Completed: ALTER DATABASE   MOUNT
+ALTER DATABASE ARCHIVELOG
+Completed: ALTER DATABASE ARCHIVELOG
+ALTER DATABASE FORCE LOGGING
+ALTER DATABASE FORCE LOGGING command is waiting for existing direct writes to finish. This may take a long time.
+Completed: ALTER DATABASE FORCE LOGGING
+ALTER DATABASE OPEN
+Crash Recovery excluding pdb 2 which was cleanly closed.
+Crash Recovery excluding pdb 3 which was cleanly closed.
+Thread 1 opened at log sequence 1
+Successful open of redo thread 1
+PDB$SEED(2):Opening pdb with Resource Manager plan: DEFAULT_PLAN
+FREEPDB1(3):Opening pdb with Resource Manager plan: DEFAULT_PLAN
+Completed: Pluggable database FREEPDB1 opened read write 
+Completed: ALTER DATABASE OPEN
+ORA-07427: spstp: cannot change directory to dbs.
+ORA-27300: OS system dependent operation:chdir() failed with status: 2
+ORA-27301: OS failure message: No such file or directory
+ORA-27302: failure occurred at: spstp:9
+ORA-27303: additional information: error returned by chdir() is 2
+Starting ORACLE instance (normal) (OS id: 32)
+ORA-00800: soft external error, arguments: [Set Priority Failed], [VKTM], [Check traces and OS configuration], [Check Oracle document and MOS notes], []
+ORA-00800: soft external error, arguments: [Set Priority Failed], [LGWR], [Check traces and OS configuration], [Check Oracle document and MOS notes], []
+ALTER DATABASE   MOUNT
+Successful mount of redo thread 1, with mount id 1519607605
+Completed: ALTER DATABASE   MOUNT
+ALTER DATABASE OPEN
+Crash Recovery excluding pdb 2 which was cleanly closed.
+Crash Recovery excluding pdb 3 which was cleanly closed.
+Thread 1 opened at log sequence 3
+Successful open of redo thread 1
+PDB$SEED(2):Opening pdb with Resource Manager plan: DEFAULT_PLAN
+FREEPDB1(3):Opening pdb with Resource Manager plan: DEFAULT_PLAN
+Completed: Pluggable database FREEPDB1 opened read write 
+Completed: ALTER DATABASE OPEN

@@ -1,0 +1,59 @@
+SP2-0310: unable to open file "scripts/ops/marca.sql"
+Help: https://docs.oracle.com/error-help/db/sp2-0310/
+Enter value for marca: SP2-0768: Illegal SPOOL command
+Help: https://docs.oracle.com/error-help/db/sp2-0768/
+Usage: SPOOL { <file> | OFF | OUT }
+where <file> is file_name[.ext] [CRE[ATE]|REP[LACE]|APP[END]]
+
+== 1. Cuántos procesos tiene la instancia y de qué tipo ==
+
+TIPO	    PROCESOS_ORACLE PROCESOS_LINUX
+----------- --------------- --------------
+background		 88		55
+servidor		  7		 7
+(si procesos_oracle > procesos_linux: algunos procesos Oracle son HILOS dentro de un mismo proceso Linux, p. ej. SCMN)
+
+== 2. Los procesos obligatorios y los que verás en el examen (v$bgprocess + v$process) ==
+
+PNAME  SPID	DESCRIPTION
+------ -------- ------------------------------------------------
+PMON   909	process cleanup
+LREG   971	Listener Registration
+SMON   965	System Monitor Process
+DBW0   959	db writer process 0
+LGWR   961	Redo etc.
+CKPT   963	checkpoint
+MMON   981	Manageability Monitor Process
+MMNL   988	Manageability Monitor Process 2
+RECO   969	distributed recovery
+ARC0   1060	Archival Process 0
+CJQ0   1266	Job Queue Coordinator
+CLMN   913	process cleanup
+DIA0   955	diagnosibility process 0
+DIAG   939	diagnosibility process
+MMAN   931	Memory Manager
+PMAN   953	process manager
+PSP0   917	process spawner 0
+VKTM   921	Virtual Keeper of TiMe process
+
+== 3. ¿Hay archivador (ARCn)? En NOARCHIVELOG no debería aparecer ==
+
+PROCESOS_ARCN
+-------------
+	    4
+
+== 4. Mi sesión y el proceso servidor que la atiende (arquitectura de servidor dedicado) ==
+
+       SID    SERIAL# USERNAME	   MACHINE	  PROGRAM			     SPID
+---------- ---------- ------------ -------------- ---------------------------------- --------
+	23	39192 SYS	   d3d7ea2d28a4   sqlplus@d3d7ea2d28a4 (TNS V1-V3)   2499
+
+== 5. Todas las sesiones de usuario ahora mismo ==
+
+       SID USERNAME	STATUS	 MACHINE	PROGRAM 			   SPID
+---------- ------------ -------- -------------- ---------------------------------- --------
+	23 SYS		ACTIVE	 d3d7ea2d28a4	sqlplus@d3d7ea2d28a4 (TNS V1-V3)   2499
+	64		ACTIVE	 d3d7ea2d28a4	oracle@d3d7ea2d28a4 (J000)	   1638
+       217		ACTIVE	 d3d7ea2d28a4	oracle@d3d7ea2d28a4 (J002)	   1968
+       222		ACTIVE	 d3d7ea2d28a4	oracle@d3d7ea2d28a4 (J001)	   1640
+not spooling currently
