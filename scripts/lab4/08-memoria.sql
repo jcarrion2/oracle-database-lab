@@ -37,7 +37,7 @@ SELECT name, ROUND(CASE unit WHEN 'bytes' THEN value / 1048576 ELSE value END, 1
  WHERE name IN ('aggregate PGA target parameter', 'aggregate PGA auto target', 'total PGA inuse',
                 'total PGA allocated', 'maximum PGA allocated', 'over allocation count',
                 'cache hit percentage')
-   AND con_id = 0;   -- con_id 0 = toda la instancia
+   AND con_id = 0;
 PROMPT
 PROMPT == 7. Los procesos que más PGA usan ahora mismo (v$process) ==
 SELECT * FROM (
