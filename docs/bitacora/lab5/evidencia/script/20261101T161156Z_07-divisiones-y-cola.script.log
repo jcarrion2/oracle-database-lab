@@ -1,0 +1,210 @@
+
+===== 1. 200 000 inserciones de una fila en cada tabla, contando las divisiones de hoja (leaf node splits) =====
+AZAR (claves aleatorias)           divisiones de hoja =   595   de ellas 90/10 =     0
+CRECIENTE (secuencia, fecha...)    divisiones de hoja =   398   de ellas 90/10 =   398
+CRECIENTE con ??ndice REVERSE      divisiones de hoja =   511   de ellas 90/10 =     0
+(90/10: al llenarse la hoja de la derecha, Oracle abre una nueva casi vacía y deja la vieja LLENA. 50/50: reparte a medias)
+
+===== 2. Resultado: hojas y llenado de cada índice =====
+
+INDEX_NAME     INDEX_TYPE                       HOJAS ENTRADAS_POR_HOJA
+-------------- --------------------------- ---------- -----------------
+IX_CRECIENTE   NORMAL                             399               501
+IX_INVERTIDA   NORMAL/REV                         512               391
+IX_AZAR        NORMAL                             596               336
+(Teoría, Unidad 3: con inserciones al azar un B-tree se estabiliza en torno al 69 % de llenado (ln 2). Compruébalo en el gráfico)
+
+===== 3. El precio del índice REVERSE: reparte la "hoja caliente" de la derecha, pero ya no sirve para rangos =====
+rango con ??ndice normal       filas=      1  lecturas l??gicas=      4  f??sicas=    0       .2 ms
+                               plan: SORT AGGREGATE > TABLE ACCESS BY INDEX ROWID BATCHED CRECIENTE > INDEX RANGE SCAN IX_CRECIENTE
+rango con ??ndice REVERSE      filas=      1  lecturas l??gicas=    878  f??sicas=    0      3.5 ms
+                               plan: SORT AGGREGATE > TABLE ACCESS FULL INVERTIDA
+
+
+
+
+
+
+
+===== LAB5_PRUEBAS.IX_AZAR · resumen (hoja útil = 7996 bytes en bloque de 8 KB) =====
+
+     HOJAS ENTRADAS_VIVAS ENTRADAS_BORRADAS MEDIA_ENTRADAS_POR_HOJA PCT_OCUPACION_VIVA PCT_ESPACIO_USADO HOJAS_VACIAS HOJAS_BAJO_50PCT
+---------- -------------- ----------------- ----------------------- ------------------ ----------------- ------------ ----------------
+       596         200000                 0                     336               75.4              75.4            0               14
+
+===== Histograma: cuántas hojas hay en cada tramo de llenado (solo entradas vivas) =====
+
+RANGO          HOJAS OCUPACION
+--------- ---------- ----------------------------------------------------
+ 40-49 %          14 ####
+ 50-59 %         129 ####################################
+ 60-69 %          50 ##############
+ 70-79 %         124 ###################################
+ 80-89 %         180 ##################################################
+ 90-99 %          99 ############################
+
+===== Mapa de izquierda (claves bajas) a derecha (claves altas): 64 tramos de hojas consecutivas =====
+Leyenda por ocupación media del tramo:  ' ' <10 %   . <30 %   : <50 %   - <70 %   = <90 %   # >=90 %
+
+MAPA
+------------------------------------------------------------------
+[==-====-==#===------===========---==--============--====-=======]
+Pista para leer el mapa: si la izquierda está vacía y la derecha llena, es un PATRÓN COLA (se inserta por la derecha y se borra por la izquierda)
+
+
+
+
+
+
+
+===== LAB5_PRUEBAS.IX_CRECIENTE · resumen (hoja útil = 7996 bytes en bloque de 8 KB) =====
+
+     HOJAS ENTRADAS_VIVAS ENTRADAS_BORRADAS MEDIA_ENTRADAS_POR_HOJA PCT_OCUPACION_VIVA PCT_ESPACIO_USADO HOJAS_VACIAS HOJAS_BAJO_50PCT
+---------- -------------- ----------------- ----------------------- ------------------ ----------------- ------------ ----------------
+       399         200000                 0                     501               99.9              99.9            0                0
+
+===== Histograma: cuántas hojas hay en cada tramo de llenado (solo entradas vivas) =====
+
+RANGO          HOJAS OCUPACION
+--------- ---------- ----------------------------------------------------
+ 70-79 %           1 #
+ 90-99 %         398 ##################################################
+
+===== Mapa de izquierda (claves bajas) a derecha (claves altas): 64 tramos de hojas consecutivas =====
+Leyenda por ocupación media del tramo:  ' ' <10 %   . <30 %   : <50 %   - <70 %   = <90 %   # >=90 %
+
+MAPA
+------------------------------------------------------------------
+[################################################################]
+Pista para leer el mapa: si la izquierda está vacía y la derecha llena, es un PATRÓN COLA (se inserta por la derecha y se borra por la izquierda)
+
+
+
+
+
+
+
+===== LAB5_PRUEBAS.IX_INVERTIDA · resumen (hoja útil = 7996 bytes en bloque de 8 KB) =====
+
+     HOJAS ENTRADAS_VIVAS ENTRADAS_BORRADAS MEDIA_ENTRADAS_POR_HOJA PCT_OCUPACION_VIVA PCT_ESPACIO_USADO HOJAS_VACIAS HOJAS_BAJO_50PCT
+---------- -------------- ----------------- ----------------------- ------------------ ----------------- ------------ ----------------
+       512         200000                 0                     391               77.9              77.9            0                0
+
+===== Histograma: cuántas hojas hay en cada tramo de llenado (solo entradas vivas) =====
+
+RANGO          HOJAS OCUPACION
+--------- ---------- ----------------------------------------------------
+ 60-69 %         103 #########################
+ 70-79 %         210 ##################################################
+ 80-89 %         136 #################################
+ 90-99 %          63 ###############
+
+===== Mapa de izquierda (claves bajas) a derecha (claves altas): 64 tramos de hojas consecutivas =====
+Leyenda por ocupación media del tramo:  ' ' <10 %   . <30 %   : <50 %   - <70 %   = <90 %   # >=90 %
+
+MAPA
+------------------------------------------------------------------
+[----==-=----==-=----====================#=#=#===========#=#=#===]
+Pista para leer el mapa: si la izquierda está vacía y la derecha llena, es un PATRÓN COLA (se inserta por la derecha y se borra por la izquierda)
+
+===== 1. La cola trabaja: entran 200 000 mensajes, se procesan (y borran) los 150 000 más antiguos, entran 50 000 más =====
+
+MENSAJES_VIVOS    PRIMERO     ULTIMO
+-------------- ---------- ----------
+        100000     150001     250000
+
+===== 2. El síntoma: "dame el siguiente mensaje" (el más antiguo) lee de más =====
+siguiente mensaje (cola)       filas=      1  lecturas l??gicas=    287  f??sicas=    0       .7 ms
+                               plan: COUNT STOPKEY > VIEW > INDEX FULL SCAN IX_COLA
+siguiente mensaje (sano)       filas=      1  lecturas l??gicas=      2  f??sicas=    0       .2 ms
+                               plan: COUNT STOPKEY > VIEW > INDEX FULL SCAN IX_CRECIENTE
+(El índice de la cola baja hasta la hoja más a la izquierda y la encuentra VACÍA, y la siguiente, y la siguiente...)
+
+===== 3. Lo que dice INDEX_STATS (VALIDATE STRUCTURE): entradas borradas que siguen ocupando sitio =====
+
+INDEX_NAME     ALTURA      HOJAS   ENTRADAS   BORRADAS PCT_BORRADAS   PCT_USED   MB_ARBOL
+---------- ---------- ---------- ---------- ---------- ------------ ---------- ----------
+IX_COLA             2        486     189903      89903           47         78        3.7
+
+
+
+
+
+
+
+===== LAB5_PRUEBAS.IX_COLA · resumen (hoja útil = 7996 bytes en bloque de 8 KB) =====
+
+     HOJAS ENTRADAS_VIVAS ENTRADAS_BORRADAS MEDIA_ENTRADAS_POR_HOJA PCT_OCUPACION_VIVA PCT_ESPACIO_USADO HOJAS_VACIAS HOJAS_BAJO_50PCT
+---------- -------------- ----------------- ----------------------- ------------------ ----------------- ------------ ----------------
+       486         100000             89903                     206               41.1                78          285              286
+
+===== Histograma: cuántas hojas hay en cada tramo de llenado (solo entradas vivas) =====
+
+RANGO          HOJAS OCUPACION
+--------- ---------- ----------------------------------------------------
+  0-9  %         285 ##################################################
+ 20-29 %           1 #
+ 70-79 %           1 #
+ 90-99 %         199 ###################################
+
+===== Mapa de izquierda (claves bajas) a derecha (claves altas): 64 tramos de hojas consecutivas =====
+Leyenda por ocupación media del tramo:  ' ' <10 %   . <30 %   : <50 %   - <70 %   = <90 %   # >=90 %
+
+MAPA
+------------------------------------------------------------------
+[                                   .############################]
+Pista para leer el mapa: si la izquierda está vacía y la derecha llena, es un PATRÓN COLA (se inserta por la derecha y se borra por la izquierda)
+
+===== Remedios para el patrón cola, medidos =====
+
+PASO                                    HOJAS   BORRADAS MB_SEGMENTO LECTURAS_SIGUIENTE_MENSAJE
+---------------------------------- ---------- ---------- ----------- --------------------------
+0. cola degradada                         486      89903           4                        287
+1. tras COALESCE                          201          0           4                          2
+2. tras SHRINK SPACE                      201          0        1.69                          2
+3. tras REBUILD ONLINE                    223          0           2                          2
+
+(Ojo: DBA_INDEXES.LEAF_BLOCKS, que rellena DBMS_STATS, no cuenta las hojas VACÍAS: para verlas hace falta VALIDATE STRUCTURE o el gráfico)
+COALESCE        fusiona hojas vecinas medio vacías dentro del índice. En línea, sin bloqueo. NO devuelve espacio al tablespace.
+SHRINK SPACE    COALESCE + devuelve los bloques sobrantes al tablespace (baja la marca de agua). En línea.
+REBUILD ONLINE  construye un índice nuevo leyendo el viejo y lo cambia al final. Necesita espacio doble y genera mucho redo.
+Regla profesional: medir antes (gráfico o INDEX_STATS); COALESCE para la cola, REBUILD solo con una causa concreta y medida.
+Y la cura de verdad del patrón cola es de DISEÑO: particionar por fecha y vaciar particiones enteras (DROP/TRUNCATE PARTITION).
+
+
+
+
+
+
+
+===== LAB5_PRUEBAS.IX_COLA · resumen (hoja útil = 7996 bytes en bloque de 8 KB) =====
+
+     HOJAS ENTRADAS_VIVAS ENTRADAS_BORRADAS MEDIA_ENTRADAS_POR_HOJA PCT_OCUPACION_VIVA PCT_ESPACIO_USADO HOJAS_VACIAS HOJAS_BAJO_50PCT
+---------- -------------- ----------------- ----------------------- ------------------ ----------------- ------------ ----------------
+       223         100000                 0                     448               89.7              89.7            0                0
+
+===== Histograma: cuántas hojas hay en cada tramo de llenado (solo entradas vivas) =====
+
+RANGO          HOJAS OCUPACION
+--------- ---------- ----------------------------------------------------
+ 60-69 %           1 #
+ 80-89 %         222 ##################################################
+
+===== Mapa de izquierda (claves bajas) a derecha (claves altas): 64 tramos de hojas consecutivas =====
+Leyenda por ocupación media del tramo:  ' ' <10 %   . <30 %   : <50 %   - <70 %   = <90 %   # >=90 %
+
+MAPA
+------------------------------------------------------------------
+[================================================================]
+Pista para leer el mapa: si la izquierda está vacía y la derecha llena, es un PATRÓN COLA (se inserta por la derecha y se borra por la izquierda)
+
+Session altered.
+
+
+User dropped.
+
+
+LIMPIEZA
+---------------------------------------
+Esquema de pruebas LAB5_PRUEBAS borrado
+
