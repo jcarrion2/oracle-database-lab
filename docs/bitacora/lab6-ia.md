@@ -34,3 +34,35 @@ no aplica
 - **Propósito (para qué lo necesitaba):** Entender las instrucciones y organizar la práctica.
 - **Qué hace (con mis palabras; línea a línea si es SQL corto):** Chat GPT me explico de forma detallada como estaba compuesta la practica y que es lo que debia hacer, separamos las cosas que teniamos que hacer por bloques.
 - **Evidencia de ejecución (archivo de docs/bitacora/lab6/evidencia con mi cabecera):** no aplica.
+
+## Entrada 2
+- **Herramienta:** ChatGPT.
+- **Prompt:** Solicitudes de ayuda durante la ejecución del laboratorio.
+- **Código recibido:** Comandos de Ubuntu, Docker, SQL y Git para ejecutar los scripts, resolver errores y guardar evidencias.
+- **Dónde lo usé:** Partes A-I.
+- **Propósito:** Seguir los ejercicios del profesor y resolver los problemas encontrados.
+- **Qué hace:** Permite ejecutar los ejercicios y comprobar sus resultados.
+- **Evidencia de ejecución:** docs/bitacora/lab6/evidencia/
+
+## Entrada 3
+- **Herramienta:** ChatGPT.
+- **Prompt:** Solicitudes de ayuda para resolver los tres incidentes de guardia.
+- **Código recibido:**
+  - ALTER SYSTEM KILL SESSION '22,23361' IMMEDIATE;
+  - EXEC DBMS_SERVICE.START_SERVICE('academia_app');
+  - ALTER PLUGGABLE DATABASE FREEPDB1 SAVE STATE;
+  - ALTER SYSTEM REGISTER;
+  - ALTER USER APP_ACADEMIA ACCOUNT UNLOCK;
+- **Dónde lo usé:** Parte I.
+- **Propósito:** Recuperar el funcionamiento de la aplicación.
+- **Qué hace:** Elimina la sesión bloqueadora, recupera el servicio detenido y desbloquea la cuenta de aplicación.
+- **Evidencia de ejecución:** Registros 08 de diagnóstico, resolución y validación.
+
+## Entrada 4
+- **Herramienta:** ChatGPT.
+- **Prompt literal:** Necesito que me ayudes con las preguntas
+- **Código recibido:** Borradores de documentación y código Python para actualizar las respuestas con los valores de las evidencias.
+- **Dónde lo usé:** lab6-respuestas.md y lab6-guardia.md.
+- **Propósito:** Organizar las preguntas y los informes de incidencias.
+- **Qué hace:** Recopila los resultados de las pruebas y facilita su documentación.
+- **Evidencia de ejecución:** Registros de las partes B-I y documentos de la bitácora.
