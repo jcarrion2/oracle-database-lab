@@ -1,0 +1,15 @@
+== EVIDENCIA alumno=E016 hora=2026-11-25T20:53:03Z origen=08-inc601-validacion
+== EVIDENCIA contenedor=d3d7ea2d28a4 dbid=1509902213 arranque=2026-11-25T19:00:23 scn=5364745
+
+Session altered.
+
+
+ESTUDIANTE_ID ESTADO
+------------- --------------------
+	  101 ACTIVO
+
+
+SESIONES_BLOQUEADAS
+-------------------
+		  0
+
